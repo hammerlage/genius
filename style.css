@@ -179,7 +179,7 @@ body {
     border-radius: 15%;
     margin: 1px 2.8px 0px 1px;
     height: 10px;
-    width: 12px;
+    width: 10px;
   }
   #buttonOff {
     background: blue;
@@ -188,7 +188,7 @@ body {
     border-radius: 15%;
     margin: 1px 0px 0px 0px;
     height: 10px;
-    width: 12px;
+    width: 10px;
   }
   #offText {
     vertical-align: top;
