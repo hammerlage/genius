@@ -13,8 +13,8 @@ class Click(ndb.Model):
   @classmethod
   def create(cls, params):
     click = cls(
-        session=params['session'], 
-        timestamp=params['timestamp'],
-        button=params['button'])
+        session=params.get('session'), 
+        timestamp=params.get('timestamp'),
+        button=params.get('button'))
     click.put()
     return click
