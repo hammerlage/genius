@@ -18,7 +18,6 @@
 
 import webapp2
 import json
-import make_json_serializable
 
 class BaseHandler(webapp2.RequestHandler):
   """The other handlers inherit from this class.  Provides some helper methods

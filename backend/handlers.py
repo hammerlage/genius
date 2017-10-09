@@ -16,4 +16,7 @@ class ClicksHandler(BaseHandler):
 
   def post(self):
     click = models.Click.create(self.request)
-    self.render_json(models.JsonResponse(click))
+    response = {'success': False}
+    if click is not None:
+      response = {'success': True, 'data': click.to_json()}
+    self.render_json(response)
