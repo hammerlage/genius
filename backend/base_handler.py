@@ -23,5 +23,5 @@ class BaseHandler(webapp2.RequestHandler):
   """The other handlers inherit from this class.  Provides some helper methods
   for rendering a template and generating template links."""
 
-  def render_json(self, response, success=True):
-    self.response.write("{success: %s, data: %s}" % success, json.dumps(response.__dict__))
+  def render_json(self, response):
+    self.response.write("%s" % json.dumps(response.__dict__))
