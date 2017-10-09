@@ -7,6 +7,10 @@ var toques = [];
 var arrayExpected = [];
 var arrayPlayed = [];
 
+var currRecord = {};
+var data = [];
+var blockGame = true;
+
 $(document).ready(function () {
     setupAudio();
 
@@ -24,21 +28,39 @@ $(document).ready(function () {
     });
 
     $(".btn").click(function () {
-        if (!onOff || toques.length <= 0)
+        if (!onOff || toques.length <= 0 || blockGame)
             return;
 
+		currRecord.clickTimeAt = new Date();
+		var dataRecord = {
+			userName: currRecord.userName
+			, gameId: currRecord.gameId
+			, roundChallenge: currRecord.roundChallenge.slice()
+			, roundStartAt: currRecord.roundStartAt
+			, clickTimeAt: currRecord.clickTimeAt
+			, roundSuccess: true
+		};
+		data.push(dataRecord);
+		
         // capta a cor clicada e toca o som
         var corClicada = $(this).data("cor");
         // valida sequencia
         if (toques[idx] != corClicada) {
+			
+			for(var i = 0 ; i < data.length ; ++i){
+				var item = data[i];
+				if(item.gameId == currRecord.gameId && item.roundChallenge.length == currRecord.roundChallenge.length)
+					item.roundSuccess = false;
+			}
+						
             setTimeout(lose, DELAY);
             return;
         }
 
-        console.log("arrayExpected: " + arrayExpected);//ids
-        console.log(toques);
+        //console.log("arrayExpected: " + arrayExpected);//ids
+        //console.log(toques);
         d = new Date();
-        console.log(d.toLocaleString());//userArrayLog.push(d.toLocaleString());
+        //console.log(d.toLocaleString());//userArrayLog.push(d.toLocaleString());
 
         // pisca cor corrente
         pisca($(this), 0);
@@ -54,6 +76,7 @@ function zeraEstado() {
     // zera estado do jogo
     idx = 0;
     toques = [];
+	arrayExpected = [];
 }
 
 function turnOnOff() {
@@ -71,6 +94,11 @@ function turnOnOff() {
 
 function start() {
     zeraEstado();
+	
+	currRecord = {};
+	currRecord.userName = null;
+	currRecord.gameId = guid();
+	
     // inicia jogada
     proximaJogada();
 }
@@ -99,6 +127,8 @@ function proximaJogada() {
     if (!onOff)
         return;
 
+	blockGame = true;
+	
     // zera sequencia
     idx = 0;
     // insere nova cor aleatória
@@ -106,19 +136,38 @@ function proximaJogada() {
     // toca sons na sequencia
     for (i = 0; i < toques.length; i++) {
         var v = toques[i];
-        pisca($(".btn[data-cor=" + v + "]"), DELAY * (i + 1));
+        pisca($(".btn[data-cor=" + v + "]"), DELAY * (i + 1), i == (toques.length -1));
     }
     arrayExpected.push($(".btn[data-cor=" + toques[toques.length-1] + "]").data("ncor"));
+	currRecord.roundChallenge = arrayExpected;
+	
     // mostra jogada corrente
     $(".jogadas").html(lpad(toques.length, 3, '0'));
 }
 
-function pisca(o, delay) {
+function pisca(o, delay, last) {
     setTimeout(function () {
         playCor($(o).data("cor"));
         $(o).find("img").fadeIn(24, function () {
             $(this).fadeOut();
         });
+		
+		if(last){
+			blockGame = false;
+			currRecord.roundStartAt = new Date();
+		}
+		
     }, delay);
 }
 function lpad(a, b, c) { a = a.toString(); for (i = a.length + 1; i <= b; i++) a = c + a; return a }
+
+function guid() {
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+}
