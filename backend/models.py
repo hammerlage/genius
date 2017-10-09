@@ -30,7 +30,6 @@ class Click(ndb.Model):
     return click
 
   def to_json(self):
-    return "{'session': '%s', 'timestamp': '%s', 'button': '%s'}" % 
-        self.session.decode('utf-8'),
+    return "{'session': '%s', 'timestamp': '%s', 'button': '%s'}" % (self.session.decode('utf-8'),
         self.timestamp.decode('utf-8'),
-        self.button.decode('utf-8')
+        self.button.decode('utf-8'))
