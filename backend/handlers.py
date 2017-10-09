@@ -3,6 +3,7 @@
 """Genius backend API - Handlers"""
 
 from base_handler import BaseHandler
+import models
 
 class IndexHandler(BaseHandler):
   """Displays the 'home' page."""
@@ -14,4 +15,5 @@ class ClicksHandler(BaseHandler):
   """Displays the 'home' page."""
 
   def post(self):
-      self.render_json(self.request)
+      click = models.Click.create(self.request)
+      self.render_json(click)
