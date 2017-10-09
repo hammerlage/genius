@@ -18,10 +18,11 @@
 
 import webapp2
 import json
+import make_json_serializable
 
 class BaseHandler(webapp2.RequestHandler):
   """The other handlers inherit from this class.  Provides some helper methods
   for rendering a template and generating template links."""
 
   def render_json(self, response):
-    self.response.write("%s" % json.dumps(response.__dict__))
+    self.response.write("%s" % json.dumps(response))
