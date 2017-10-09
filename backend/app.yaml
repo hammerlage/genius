@@ -1,0 +1,7 @@
+runtime: python27
+threadsafe: true
+api_version: 2
+
+handlers:
+- url: .*
+  script: main.application
