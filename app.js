@@ -10,7 +10,7 @@ var arrayPlayed = [];
 var currRecord = {};
 var data = [];
 var blockGame = true;
-var DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss:mmm";
+var DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss:mmmm";
 
 $(document).ready(function () {
     setupAudio();
@@ -28,9 +28,10 @@ $(document).ready(function () {
         $(this).find("img").attr("src", audioOnOff ? "img/btn_sound_on.png" : "img/btn_sound_off.png");
     });
 
-    $(".btn").click(function () {
+    $(".btn").click(function (event) {
 		
 		var currDateTime = new Date();
+		var clickTimestamp = event.timeStamp;
 		
         if (!onOff || toques.length <= 0 || blockGame)
             return;
@@ -41,7 +42,9 @@ $(document).ready(function () {
 			, gameId: currRecord.gameId
 			, roundChallenge: currRecord.roundChallenge.slice()
 			, roundStartAt: moment(currRecord.roundStartAt).format(DATETIME_FORMAT)
+			, roundStartTimestamp: currRecord.roundStartTimestamp
 			, clickTimeAt: moment(currRecord.clickTimeAt).format(DATETIME_FORMAT)
+			, clickTimestamp: clickTimestamp
 			, roundSuccess: true
 		};
 		data.push(dataRecord);
@@ -163,6 +166,7 @@ function pisca(o, delay, last) {
 		if(last){
 			blockGame = false;
 			currRecord.roundStartAt = new Date();
+			currRecord.roundStartTimestamp = performance.now();
 		}
 		
     }, delay);
