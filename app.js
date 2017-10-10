@@ -10,6 +10,7 @@ var arrayPlayed = [];
 var currRecord = {};
 var data = [];
 var blockGame = true;
+var DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss:mmmm";
 
 $(document).ready(function () {
     setupAudio();
@@ -27,23 +28,33 @@ $(document).ready(function () {
         $(this).find("img").attr("src", audioOnOff ? "img/btn_sound_on.png" : "img/btn_sound_off.png");
     });
 
-    $(".btn").click(function () {
+    $(".btn").click(function (event) {
+		
+		var currDateTime = new Date();
+		var clickTimestamp = event.timeStamp;
+		
         if (!onOff || toques.length <= 0 || blockGame)
             return;
 
-		currRecord.clickTimeAt = new Date();
+		currRecord.clickTimeAt = currDateTime;
 		var dataRecord = {
 			userName: currRecord.userName
 			, gameId: currRecord.gameId
 			, roundChallenge: currRecord.roundChallenge.slice()
-			, roundStartAt: currRecord.roundStartAt
-			, clickTimeAt: currRecord.clickTimeAt
+			, roundStartAt: moment(currRecord.roundStartAt).format(DATETIME_FORMAT)
+			, roundStartTimestamp: currRecord.roundStartTimestamp
+			, clickTimeAt: moment(currRecord.clickTimeAt).format(DATETIME_FORMAT)
+			, clickTimestamp: clickTimestamp
 			, roundSuccess: true
 		};
 		data.push(dataRecord);
 		
         // capta a cor clicada e toca o som
         var corClicada = $(this).data("cor");
+		
+		dataRecord.currClickAnswer = arrayExpected.slice(0, idx);
+		dataRecord.currClickAnswer.push($(".btn[data-cor=" + corClicada + "]").data("ncor"));
+		
         // valida sequencia
         if (toques[idx] != corClicada) {
 			
@@ -155,6 +166,7 @@ function pisca(o, delay, last) {
 		if(last){
 			blockGame = false;
 			currRecord.roundStartAt = new Date();
+			currRecord.roundStartTimestamp = performance.now();
 		}
 		
     }, delay);
