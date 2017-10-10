@@ -8,6 +8,8 @@ import webapp2
 
 application = webapp2.WSGIApplication(
     [('/', IndexHandler),
-     ('/api/clicks', ClicksHandler)
+     ('/api/clicks', ClicksHandler),
+     ('/api/ranking', RankingHandler),
+     ('/export/clicks.csv', ExportClicksHandler)
     ],
     debug=False)
