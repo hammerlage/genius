@@ -15,6 +15,11 @@ class IndexHandler(BaseHandler):
 
 class ClicksHandler(BaseHandler):
 
+  def options(self):      
+    self.response.headers['Access-Control-Allow-Origin'] = '*'
+    self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
+    self.response.headers['Access-Control-Allow-Methods'] = 'POST'
+
   def post(self):
 
     for request in json.loads(self.request.body):
