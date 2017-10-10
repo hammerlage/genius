@@ -13,8 +13,12 @@ class Click(ndb.Model):
   @classmethod
   def create(cls, params):
     click = cls(
-        session=params['session'], 
-        timestamp=params['timestamp'],
-        button=params['button'])
+        session=params.get('session'), 
+        timestamp=params.get('timestamp'),
+        button=params.get('button'))
     click.put()
     return click
+
+  def to_json(self):
+    return {'session': self.session.decode('utf-8'), 
+      'timestamp': self.timestamp.decode('utf-8'), 'button': self.button.decode('utf-8')}
