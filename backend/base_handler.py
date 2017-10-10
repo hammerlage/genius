@@ -24,4 +24,5 @@ class BaseHandler(webapp2.RequestHandler):
   for rendering a template and generating template links."""
 
   def render_json(self, response):
+    self.response.headers.add('Access-Control-Allow-Origin', '*')
     self.response.write("%s" % json.dumps(response))
