@@ -189,8 +189,8 @@ function s4() {
 }
 
 function submitGameData(dataToSubmit){
-	for(var i = 0; i < dataToSubmit.length; ++i){
-		var currItem = dataToSubmit[i];
+	//for(var i = 0; i < dataToSubmit.length; ++i){
+		//var currItem = dataToSubmit[i];
 		/* $.ajax({
 			url: 'https://genius-io-project.appspot.com/api/clicks'
 			, crossDomain: true
@@ -215,11 +215,11 @@ function submitGameData(dataToSubmit){
 		   "content-type": "application/json; charset=utf-8"
 		 },
 		 "processData": false,
-		 "data": JSON.stringify(currItem)
+		 "data": JSON.stringify(dataToSubmit)
 		}
 
 		$.ajax(settings).done(function (response) {
 		 console.log(response);
 		});
-	}
+	//}
 }
