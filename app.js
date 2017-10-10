@@ -10,6 +10,7 @@ var arrayPlayed = [];
 var currRecord = {};
 var data = [];
 var blockGame = true;
+var DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss:mmm";
 
 $(document).ready(function () {
     setupAudio();
@@ -28,22 +29,29 @@ $(document).ready(function () {
     });
 
     $(".btn").click(function () {
+		
+		var currDateTime = new Date();
+		
         if (!onOff || toques.length <= 0 || blockGame)
             return;
 
-		currRecord.clickTimeAt = new Date();
+		currRecord.clickTimeAt = currDateTime;
 		var dataRecord = {
 			userName: currRecord.userName
 			, gameId: currRecord.gameId
 			, roundChallenge: currRecord.roundChallenge.slice()
-			, roundStartAt: currRecord.roundStartAt
-			, clickTimeAt: currRecord.clickTimeAt
+			, roundStartAt: moment(currRecord.roundStartAt).format(DATETIME_FORMAT)
+			, clickTimeAt: moment(currRecord.clickTimeAt).format(DATETIME_FORMAT)
 			, roundSuccess: true
 		};
 		data.push(dataRecord);
 		
         // capta a cor clicada e toca o som
         var corClicada = $(this).data("cor");
+		
+		dataRecord.currClickAnswer = arrayExpected.slice(0, idx);
+		dataRecord.currClickAnswer.push($(".btn[data-cor=" + corClicada + "]").data("ncor"));
+		
         // valida sequencia
         if (toques[idx] != corClicada) {
 			
