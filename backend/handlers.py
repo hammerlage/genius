@@ -33,6 +33,9 @@ class ClicksHandler(BaseHandler):
       if currClickAnswer is not None and len(currClickAnswer) >= 1:
         request['currClickAnswer'] = ','.join(currClickAnswer)
 
+      request['clickTimestamp'] = str(request.get('clickTimestamp'))
+      request['roundStartTimestamp'] = str(request.get('roundStartTimestamp'))
+
       request['roundSuccess'] = str(request.get('roundSuccess'))
       click = models.Click.create(request)
 
