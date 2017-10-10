@@ -212,8 +212,7 @@ function submitGameData(dataToSubmit){
 		 "url": "https://genius-io-project.appspot.com/api/clicks",
 		 "method": "POST",
 		 headers: {
-		   "content-type": "application/json",
-		   "cache-control": "no-cache"
+		   "content-type": "application/json"
 		 },
 		 "processData": false,
 		 "data": JSON.stringify(currItem)
