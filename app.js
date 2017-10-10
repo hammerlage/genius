@@ -115,11 +115,15 @@ function start() {
 }
 
 function lose() {
+	
+	//Enviar jogadas(toques) para app.
+	var tempData = data.slice();
+	data = [];
+	submitGameData(tempData);
+	
     // guarda o score para animação
     $(".jogadas").data("score", lpad(toques.length, 3, '0'));
-    
-    //Enviar jogadas(toques) para app.
-
+    	
     zeraEstado();
     $(".jogadas").html("FAIL");
     playLose();
@@ -182,4 +186,41 @@ function s4() {
   return Math.floor((1 + Math.random()) * 0x10000)
     .toString(16)
     .substring(1);
+}
+
+function submitGameData(dataToSubmit){
+	for(var i = 0; i < dataToSubmit.length; ++i){
+		var currItem = dataToSubmit[i];
+		/* $.ajax({
+			url: 'https://genius-io-project.appspot.com/api/clicks'
+			, crossDomain: true
+			, type: 'POST'
+			, headers: {
+			   "content-type": "application/json"
+			 }
+			, data: JSON.stringify(currItem)
+			, success: function (response) {
+				console.log(response);
+			}
+			, error: function (response) {
+				console.log(response);
+			}
+		}); */
+		var settings = {
+		 "async": true,
+		 "crossDomain": true,
+		 "url": "https://genius-io-project.appspot.com/api/clicks",
+		 "method": "POST",
+		 headers: {
+		   "content-type": "application/json",
+		   "cache-control": "no-cache"
+		 },
+		 "processData": false,
+		 "data": JSON.stringify(currItem)
+		}
+
+		$.ajax(settings).done(function (response) {
+		 console.log(response);
+		});
+	}
 }
