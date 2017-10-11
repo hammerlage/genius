@@ -88,6 +88,7 @@ function zeraEstado() {
     idx = 0;
     toques = [];
 	arrayExpected = [];
+	data = [];
 }
 
 function turnOnOff() {
