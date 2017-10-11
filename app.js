@@ -6,6 +6,7 @@ var idx = 0;
 var toques = [];
 var arrayExpected = [];
 var arrayPlayed = [];
+var username = "";
 
 var currRecord = {};
 var data = [];
@@ -14,6 +15,14 @@ var DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss:mmmm";
 
 $(document).ready(function () {
     setupAudio();
+
+    getRanking();
+    
+    //username modal
+    $("#btn-save-user").on("click", function(e){
+      username = $('#txt-username').val();
+      $('#myModal').modal('hide');
+    });
 
     $(".btn-on-off").click(function () {
         turnOnOff();
@@ -36,7 +45,8 @@ $(document).ready(function () {
         if (!onOff || toques.length <= 0 || blockGame)
             return;
 
-		currRecord.clickTimeAt = currDateTime;
+    currRecord.clickTimeAt = currDateTime;
+    
 		var dataRecord = {
 			userName: currRecord.userName
 			, gameId: currRecord.gameId
@@ -95,6 +105,9 @@ function turnOnOff() {
     onOff = !onOff;
     $(".jogadas").html(onOff ? "000" : "");
     if (onOff) {
+        //Nome pontuação.
+        $('#myModal').modal('show');
+
         $(".btn").sort(function (a, b) {
             return $(a).data("cor") - $(b).data("cor");
         }).each(function (i, o) {
@@ -107,7 +120,7 @@ function start() {
     zeraEstado();
 	
 	currRecord = {};
-	currRecord.userName = null;
+	currRecord.userName = username;
 	currRecord.gameId = guid();
 	
     // inicia jogada
@@ -186,6 +199,28 @@ function s4() {
   return Math.floor((1 + Math.random()) * 0x10000)
     .toString(16)
     .substring(1);
+}
+
+function getRanking(){
+  var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": "https://genius-io-project.appspot.com/api/ranking",
+    "method": "GET",
+    "cache": "true",
+    "processData": false
+   }
+
+   $.ajax(settings).done(function (response) {
+    $("#lista-ranking").empty();
+    for (var i = 0; i < response.length; i++){
+      //top 5
+      if (i <= 4){
+        var obj = response[i];
+        $("#lista-ranking").append('<li><mark>'+obj.name+'</mark><small>'+obj.score+'</small></li>');
+      }
+    }
+   });
 }
 
 function submitGameData(dataToSubmit){
