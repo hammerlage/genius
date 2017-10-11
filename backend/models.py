@@ -16,6 +16,8 @@ class Click(ndb.Model):
   clickTimeAt = ndb.StringProperty(default="-")
   clickTimestamp = ndb.StringProperty(default="-")
   totalRoundChallenge = ndb.IntegerProperty(default="-")
+  roundColors = ndb.TextProperty(default="-")
+  totalRoundColors = ndb.IntegerProperty()
 
   @classmethod
   def create(cls, params):
@@ -29,7 +31,9 @@ class Click(ndb.Model):
         roundStartTimestamp=params.get('roundStartTimestamp'),
         clickTimeAt=params.get('clickTimeAt'),
         clickTimestamp=params.get('clickTimestamp'),
-        totalRoundChallenge=params.get('totalRoundChallenge'))
+        totalRoundChallenge=params.get('totalRoundChallenge'),
+        roundColors=params.get('roundColors'),
+        totalRoundColors=params.get('totalRoundColors'))
     click.put()
     return click
 
@@ -37,9 +41,22 @@ class Click(ndb.Model):
   def getClicks(cls):
     return cls.query().fetch()
 
-  @classmethod
-  def getRanking(cls):
-    return cls.query(ndb.AND(Click.userName <> None, Click.roundSuccess == 'True')).order(Click.userName, -Click.totalRoundChallenge).fetch(3)
-
   def to_json(self):
     return {'gameId': self.gameId.decode('utf-8')}
+
+class Ranking(ndb.Model):
+
+  userName = ndb.StringProperty()
+  score = ndb.IntegerProperty()
+
+  @classmethod
+  def getRanking(cls):
+    return cls.query().order(-Ranking.score).fetch(3)
+
+  @classmethod
+  def create(cls, params):
+    ranking = cls(
+        userName=params.get('userName'),
+        score=params.get('score'))
+    ranking.put()
+    return ranking
