@@ -48,7 +48,6 @@ class ClicksHandler(BaseHandler):
 
     response = {'success': False}
     if click is not None:
-      print request['userName']
       if request['userName'] is not None:
         models.Ranking.create({'userName': request['userName'], 'score': score})
       response = {'success': True, 'data': click.to_json()}
