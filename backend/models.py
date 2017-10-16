@@ -51,7 +51,7 @@ class Ranking(ndb.Model):
 
   @classmethod
   def getRanking(cls):
-    return cls.query().order(-Ranking.score).fetch(3)
+    return cls.query().order(-Ranking.score).fetch(5)
 
   @classmethod
   def create(cls, params):
