@@ -12,6 +12,12 @@ indexes:
 
 - kind: Click
   properties:
+  - name: gameId
+  - name: clickTimeAt
+  - name: clickTimestamp
+
+- kind: Click
+  properties:
   - name: roundSuccess
   - name: userName
   - name: totalRoundChallenge

@@ -39,7 +39,7 @@ class Click(ndb.Model):
 
   @classmethod
   def getClicks(cls):
-    return cls.query().fetch()
+    return cls.query().order(Click.gameId, Click.clickTimeAt, Click.clickTimestamp).fetch()
 
   def to_json(self):
     return {'gameId': self.gameId.decode('utf-8')}

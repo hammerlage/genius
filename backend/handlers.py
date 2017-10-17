@@ -73,7 +73,7 @@ class ExportClicksHandler(BaseHandler):
       ])
     for click in models.Click.getClicks():
       writer.writerow([click.gameId,
-        click.userName,
+        click.userName.encode('utf-8'),
         click.roundSuccess,
         click.roundChallenge,
         click.currClickAnswer,
