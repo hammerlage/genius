@@ -1,19 +1,50 @@
+#!/usr/bin/python
+
+import sys
 import csv
+import repeat as rp
 
-oldGameId = None
+def is_valid(sequence):
+    if len(sequence) > 2:
+        return True
+    return False
 
-title = ['gameId', 'totalRoundChallenge', 'totalRoundColors']
+def bool_to_int(string):
+    if string == 'True':
+        return 1
+    return 0
 
-with open('clicks.csv', 'rb') as csvfile:
-    reader = csv.reader(csvfile)
-    writer = csv.writer(open('clicks_train.csv', 'w'))
-    writer.writerow(title)
-    for row in reader:
-        gameId,userName,roundSuccess,roundChallenge,currClickAnswer,roundStartAt,roundStartTimestamp,clickTimeAt,clickTimestamp,totalRoundChallenge,roundColors,totalRoundColors = row 
+def train(input_csv_file, output_csv_file):
 
-        result = [gameId, totalRoundChallenge, totalRoundColors]
-        
-        if oldGameId and oldGameId != gameId:
-            writer.writerow(result)
+    title = ['sequence', 'roundSuccess', 'totalRoundChallenge', 'totalRoundColors']
 
-        oldGameId = gameId
+    with open(input_csv_file, 'rb') as csvfile:
+        reader = csv.reader(csvfile)
+        writer = csv.writer(open(output_csv_file, 'w'))
+        writer.writerow(title)
+        oldRow = None
+        for row in reader:
+            gameId,userName,roundSuccess,roundChallenge,currClickAnswer,roundStartAt,roundStartTimestamp,clickTimeAt,clickTimestamp,totalRoundChallenge,roundColors,totalRoundColors = row 
+
+            sequence = rp.replace(roundChallenge)
+
+            if is_valid(sequence):
+
+                repetitions = rp.find(sequence, 0)
+
+                result = [sequence, bool_to_int(roundSuccess), totalRoundChallenge, totalRoundColors]
+                        
+                writer.writerow(result)
+
+            oldRow = row
+
+
+def main():
+    if len(sys.argv) != 3:
+        print "Invalid arguments: train.py <input_csv_file> <output_csv_file>"
+        exit(1)
+    
+    train(sys.argv[1], sys.argv[2])
+
+if __name__ == "__main__":
+    main()
