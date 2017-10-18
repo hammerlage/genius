@@ -3,6 +3,7 @@
 import sys
 import csv
 import repeat as rp
+import chunks as ch
 
 GAME_ID = 0
 ROUND_CHALLENGE = 3
@@ -24,6 +25,7 @@ def round(row, roundRows):
     gameId,userName,roundSuccess,roundChallenge,currClickAnswer,roundStartAt,roundStartTimestamp,clickTimeAt,clickTimestamp,totalRoundChallenge,roundColors,totalRoundColors = row 
 
     sequence = rp.replace(roundChallenge)
+    sequenceChunk = ch.chunkRound(roundChallenge)
 
     if is_valid(sequence):
 
@@ -31,7 +33,7 @@ def round(row, roundRows):
         for r in roundRows:
             a.append(float(r[CLICK_TIMESTAMP]))
 
-        result = [sequence, bool_to_int(roundSuccess), totalRoundChallenge, totalRoundColors]
+        result = [sequence, sequenceChunk, bool_to_int(roundSuccess), totalRoundChallenge, totalRoundColors]
 
     return result
 
@@ -47,7 +49,7 @@ def train(input_csv_file, output_csv_file):
         roundRows = []
         for row in reader:
             if oldRow and (row[GAME_ID] != oldRow[GAME_ID] or row[ROUND_CHALLENGE] != oldRow[ROUND_CHALLENGE]):
-                roundResult = round(row, roundRows)
+                roundResult = round(row, roundRows)                
                 if roundResult:
                     writer.writerow(roundResult)
 
@@ -59,7 +61,7 @@ def train(input_csv_file, output_csv_file):
 
 def main():
     if len(sys.argv) != 3:
-        print "Invalid arguments: train.py <input_csv_file> <output_csv_file>"
+        print("Invalid arguments: train.py <input_csv_file> <output_csv_file>")
         exit(1)
     
     train(sys.argv[1], sys.argv[2])
