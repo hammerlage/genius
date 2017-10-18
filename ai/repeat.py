@@ -1,36 +1,34 @@
-import re
-from random import randint
 from collections import Counter
 
-def ra(n):
-    range_start = 10**(n-1)
-    range_end = (10**n)-1
-    return randint(range_start, range_end)
+def _merge_dicts(x, y):
+    """Given two dicts, merge them into a new dict as a shallow copy."""
+    z = x.copy()
+    z.update(y)
+    return z
 
-clicks = "blue,blue,red,blue,green,red,yellow,red,red,green,yellow,blue,red,red,green,green,yellow,blue,red,yellow,green,red,blue,blue,yellow"
+def replace(clicks):
+    clicks = clicks.replace('blue', 'B')
+    clicks = clicks.replace('red', 'R')
+    clicks = clicks.replace('yellow', 'Y')
+    clicks = clicks.replace('green', 'G')
+    clicks = clicks.replace(',', '')
+    return clicks
 
-clicks = clicks.replace('blue', 'B')
-clicks = clicks.replace('red', 'R')
-clicks = clicks.replace('yellow', 'Y')
-clicks = clicks.replace('green', 'G')
-clicks = clicks.replace(',', '')
-
-#print list(repetitions(clicks))
-c = 0
-def count(a, c):
+def find(clicks, counter):
+    result = {}
     times=2
-    for n in range(1,len(a)/times+1)[::-1]:
-        substrings=[a[i:i+n] for i in range(len(a)-n+1)]
+    length_a = len(clicks)
+    for n in range(1,length_a/times+1)[::-1]:
+        substrings=[clicks[i:i+n] for i in range(length_a-n+1)]
         freqs=Counter(substrings)
         fmc = freqs.most_common(1)[0][1]
         if fmc>=times and n > 1:
             seq=freqs.most_common(1)[0][0]
             for i in range(fmc):
-                a = a.replace(seq, str(c), 1)
-                c = c + 1
-            print "sequence '%s' of length %s occurs %s or more times"%(seq,n,times)
-            print a
-            count(a, c)
+                clicks = clicks.replace(seq, str(counter), 1)
+                counter = counter + 1
+            result[seq] = fmc
+            r = find(clicks, counter)
+            result = _merge_dicts(result, r)
             break
-print clicks
-count(clicks, 0)
+    return result
