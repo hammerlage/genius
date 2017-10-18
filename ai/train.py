@@ -25,21 +25,18 @@ def round(row, roundRows):
     gameId,userName,roundSuccess,roundChallenge,currClickAnswer,roundStartAt,roundStartTimestamp,clickTimeAt,clickTimestamp,totalRoundChallenge,roundColors,totalRoundColors = row 
 
     sequence = rp.replace(roundChallenge)
-    sequenceChunk = ch.chunkRound(roundChallenge)
 
     if is_valid(sequence):
 
-        a = []
-        for r in roundRows:
-            a.append(float(r[CLICK_TIMESTAMP]))
-
-        result = [sequence, sequenceChunk, bool_to_int(roundSuccess), totalRoundChallenge, totalRoundColors]
+        sequenceChunk = ch.chunkRound(roundRows)
+        if sequenceChunk:
+            result = [sequence, sequenceChunk[0], sequenceChunk[1], sequenceChunk[2], bool_to_int(roundSuccess), totalRoundColors]
 
     return result
 
 def train(input_csv_file, output_csv_file):
 
-    title = ['sequence', 'roundSuccess', 'totalRoundChallenge', 'totalRoundColors']
+    title = ['sequence', 'totalRoundChallenge', 'gameTime', 'chunks', 'roundSuccess', 'totalRoundColors']
 
     with open(input_csv_file, 'rb') as csvfile:
         reader = csv.reader(csvfile)
@@ -47,17 +44,20 @@ def train(input_csv_file, output_csv_file):
         writer.writerow(title)
         oldRow = None
         roundRows = []
+        key = 0
         for row in reader:
             if oldRow and (row[GAME_ID] != oldRow[GAME_ID] or row[ROUND_CHALLENGE] != oldRow[ROUND_CHALLENGE]):
-                roundResult = round(row, roundRows)                
+                roundResult = round(oldRow, roundRows)           
                 if roundResult:
                     writer.writerow(roundResult)
 
                 roundRows = []
                 result = []
-            
-            roundRows.append(row)
-            oldRow = row
+
+            if key != 0:
+                roundRows.append(row)
+                oldRow = row
+            key = key + 1
 
 def main():
     if len(sys.argv) != 3:

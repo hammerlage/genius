@@ -7,7 +7,7 @@ import re
 
 
 CLICK_TIMESTAMP = 8
-TOTAL_ROUND_CHALLENGE = 10
+TOTAL_ROUND_CHALLENGE = 9
 
 def isfloat(value):
   try:
@@ -16,7 +16,7 @@ def isfloat(value):
   except ValueError:
     return False
 
-def chunkRound(rowIn, roundRows):
+def chunkRound(roundRows):
     lastRound = 0
     lastTimestamp = 0
     indexRound = 0
@@ -34,7 +34,7 @@ def chunkRound(rowIn, roundRows):
 
     result = None
 
-    gameId,userName,roundSuccess,roundChallenge,currClickAnswer,roundStartAt,roundStartTimestamp,clickTimeAt,clickTimestamp,totalRoundChallenge,roundColors,totalRoundColors = rowIn
+    #gameId,userName,roundSuccess,roundChallenge,currClickAnswer,roundStartAt,roundStartTimestamp,clickTimeAt,clickTimestamp,totalRoundChallenge,roundColors,totalRoundColors = rowIn
 
     for row in roundRows:
         # a.append(float(r[CLICK_TIMESTAMP]))
@@ -42,7 +42,7 @@ def chunkRound(rowIn, roundRows):
         intervalClick = float(row[CLICK_TIMESTAMP]) - lastTimestamp
         
         ## tuple
-        t = row[TOTAL_ROUND_CHALLENGE], indexRound, lastTimestamp, intervalClick, float(row[CLICK_TIMESTAMP])
+        t = row[TOTAL_ROUND_CHALLENGE], indexRound, lastTimestamp, intervalClick, float(row[CLICK_TIMESTAMP]), row[0]
 
         #matrix
         transposed.append(t)
@@ -66,13 +66,13 @@ def chunkRound(rowIn, roundRows):
         #current round
         currentRound = int(myTuple[0])
 
-    if (len(transposed) > 1):
+    if (len(transposed) > 1) and currentRound == len(transposed):
         #calc media
-        mediaRound = (sumMediaRound / (currentRound-1))
+        #mediaRound = (sumMediaRound / (currentRound-1))
 
         #calc mediana
         mediaList.sort()
-        meio = round(len(mediaList)/2)
+        meio = int(round(len(mediaList)/2))
         mediana = 0
         if (meio > 2):
             mediana = (mediaList[meio] + mediaList[meio + 1])/2
@@ -84,7 +84,7 @@ def chunkRound(rowIn, roundRows):
         timeRound = (timestampRoundList[len(mediaList) - 1] - timestampRoundList[0])/1000
         
         #cut media or mediana
-        mediaCut = (mediana + mediaRound)/2#mediaRound
+        mediaCut = mediana#(mediana + mediaRound)/2#mediaRound
 
         #iterate round calculate chunks
         for myTuple in transposed:
@@ -92,13 +92,19 @@ def chunkRound(rowIn, roundRows):
             if (float(myTuple[3]) > mediaCut):
                 chunksRound += 1
 
-            print("round: {0} clickIndex: {1} timestamp: {2} interval: {3} mediaRound: {4} mediana: {5} mediaCut: {6} timeRound:{7} chunk: {8}".format(myTuple[0], myTuple[1], myTuple[2], myTuple[3], mediaRound, mediana, mediaCut, timeRound, chunksRound))
+            #print("round: {0} clickIndex: {1} timestamp: {2} interval: {3} mediaRound: {4} mediana: {5} mediaCut: {6} timeRound:{7} chunk: {8} gameId: {9}".format(myTuple[0], myTuple[1], myTuple[2], myTuple[3], mediaRound, mediana, mediaCut, timeRound, chunksRound, myTuple[5]))
 
-        print("End round")
+        #print("End round")
 
         lastTuple = transposed[len(transposed)-1]
 
         result = [lastTuple[0], timeRound, chunksRound]
+
+    transposed = []
+    sumMediaRound = 0
+    maxRound = 0
+    chunksRound = 1
+    mediaList = []
         
     return result
 
