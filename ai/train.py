@@ -6,8 +6,10 @@ import repeat as rp
 import chunks as ch
 
 GAME_ID = 0
+ROUND_SUCCESS = 2
 ROUND_CHALLENGE = 3
 CLICK_TIMESTAMP = 8
+TOTAL_ROUND_CHALLENGE = 9
 
 def is_valid(sequence):
     if len(sequence) > 3:
@@ -19,7 +21,7 @@ def bool_to_int(string):
         return 1
     return 0
 
-def round(row, roundRows):
+def round(row, roundRows, totalRoundVictory):
     result = None
 
     gameId,userName,roundSuccess,roundChallenge,currClickAnswer,roundStartAt,roundStartTimestamp,clickTimeAt,clickTimestamp,totalRoundChallenge,roundColors,totalRoundColors = row 
@@ -31,13 +33,38 @@ def round(row, roundRows):
         sequenceNum = len(rp.remove_sequences(sequence))
         sequenceChunk = ch.chunkRound(roundRows)
         if sequenceChunk:
-            result = [sequence, sequenceChunk[0], sequenceChunk[1], sequenceChunk[2], bool_to_int(roundSuccess), totalRoundColors, sequenceNum]
+            result = [sequence, totalRoundVictory, sequenceChunk[0], sequenceChunk[1], sequenceChunk[2], bool_to_int(roundSuccess), totalRoundColors, sequenceNum]
 
     return result
 
 def train(input_csv_file, output_csv_file):
 
-    title = ['sequence', 'totalRoundChallenge', 'gameTime', 'chunks', 'roundSuccess', 'totalRoundColors', 'sequenceNum']
+    title = ['sequence', 'totalRoundVictory', 'totalRoundChallenge', 'gameTime', 'chunks', 'roundSuccess', 'totalRoundColors', 'sequenceNum']
+
+    with open(input_csv_file, 'rb') as csvfile:
+        reader = csv.reader(csvfile)
+
+        oldRow = None
+        lastSuccess = None
+        total = {}
+        key = 0
+        for row in reader:
+            if oldRow and row[GAME_ID] != oldRow[GAME_ID]:
+                if lastSuccess:
+                    total[lastSuccess[GAME_ID]] = lastSuccess[TOTAL_ROUND_CHALLENGE]
+                else:
+                    total[oldRow[GAME_ID]] = 0
+                lastSuccess = None
+            if bool_to_int(row[ROUND_SUCCESS]):
+                lastSuccess = row
+            if key > 0:
+                oldRow = row
+            key = key + 1
+        
+        if lastSuccess:
+            total[lastSuccess[GAME_ID]] = lastSuccess[TOTAL_ROUND_CHALLENGE]
+        else:
+            total[oldRow[GAME_ID]] = 0
 
     with open(input_csv_file, 'rb') as csvfile:
         reader = csv.reader(csvfile)
@@ -48,7 +75,7 @@ def train(input_csv_file, output_csv_file):
         key = 0
         for row in reader:
             if oldRow and (row[GAME_ID] != oldRow[GAME_ID] or row[ROUND_CHALLENGE] != oldRow[ROUND_CHALLENGE]):
-                roundResult = round(oldRow, roundRows)           
+                roundResult = round(oldRow, roundRows, total[oldRow[GAME_ID]])           
                 if roundResult:
                     writer.writerow(roundResult)
 
@@ -59,6 +86,11 @@ def train(input_csv_file, output_csv_file):
                 roundRows.append(row)
                 oldRow = row
             key = key + 1
+        
+        if oldRow and (row[GAME_ID] != oldRow[GAME_ID] or row[ROUND_CHALLENGE] != oldRow[ROUND_CHALLENGE]):
+            roundResult = round(oldRow, roundRows, total[oldRow[GAME_ID]])           
+            if roundResult:
+                writer.writerow(roundResult)
 
 def main():
     if len(sys.argv) != 3:
