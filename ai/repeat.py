@@ -1,4 +1,5 @@
 from collections import Counter
+import re
 
 def _merge_dicts(x, y):
     """Given two dicts, merge them into a new dict as a shallow copy."""
@@ -13,6 +14,9 @@ def replace(clicks):
     clicks = clicks.replace('green', 'G')
     clicks = clicks.replace(',', '')
     return clicks
+
+def remove_sequences(clicks):
+    return re.sub(r"([A-Z])\1+", "\\1", clicks)
 
 def find(clicks, counter):
     result = {}

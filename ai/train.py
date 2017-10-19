@@ -28,15 +28,16 @@ def round(row, roundRows):
 
     if is_valid(sequence):
 
+        sequenceNum = len(rp.remove_sequences(sequence))
         sequenceChunk = ch.chunkRound(roundRows)
         if sequenceChunk:
-            result = [sequence, sequenceChunk[0], sequenceChunk[1], sequenceChunk[2], bool_to_int(roundSuccess), totalRoundColors]
+            result = [sequence, sequenceChunk[0], sequenceChunk[1], sequenceChunk[2], bool_to_int(roundSuccess), totalRoundColors, sequenceNum]
 
     return result
 
 def train(input_csv_file, output_csv_file):
 
-    title = ['sequence', 'totalRoundChallenge', 'gameTime', 'chunks', 'roundSuccess', 'totalRoundColors']
+    title = ['sequence', 'totalRoundChallenge', 'gameTime', 'chunks', 'roundSuccess', 'totalRoundColors', 'sequenceNum']
 
     with open(input_csv_file, 'rb') as csvfile:
         reader = csv.reader(csvfile)
