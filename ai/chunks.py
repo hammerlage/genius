@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-
-import numpy
-import pandas as pd
 import os,sys
 import re
 
