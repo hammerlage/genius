@@ -4,18 +4,19 @@ from sklearn.cross_validation import train_test_split
 import xgboost as xgb
 
 # Read in our input data
-df_train = pd.read_csv('../input/train.csv')
-df_test = pd.read_csv('../input/test.csv')
+df_train = pd.read_csv('D:/input/resultClicks.csv')
+
+#df_test = pd.read_csv('../input/test.csv')
 
 # This prints out (rows, columns) in each dataframe
 print('Train shape:', df_train.shape)
-print('Test shape:', df_test.shape)
+#print('Test shape:', df_test.shape)
 
 print('Columns:', df_train.columns)
 
-y_train = df_train['target'].values
+y_train = df_train['totalRoundVictory'].values
 id_train = df_train['id'].values
-id_test = df_test['id'].values
+#id_test = df_test['id'].values
 
 # We drop these variables as we don't want to train on them
 # The other 57 columns are all numerical and can be trained on without preprocessing

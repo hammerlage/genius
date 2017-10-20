@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-
-import numpy
-import pandas as pd
 import os,sys
 import re
 
@@ -45,12 +42,16 @@ def chunkRound(roundRows):
 
         lastTimestamp = float(row[CLICK_TIMESTAMP])
 
+    first = 1
     for myTuple in transposed:
         #sum media
-        sumMediaRound += float(myTuple[3])
+        if (first):
+            first = 0
+        else:
+            sumMediaRound += float(myTuple[3])
 
         #media list
-        mediaList.append(float(myTuple[3]))
+        #mediaList.append(float(myTuple[3]))
 
         #timestamp list
         timestampRoundList.append(float(myTuple[4]))
@@ -64,23 +65,23 @@ def chunkRound(roundRows):
 
     if (len(transposed) > 1) and currentRound == len(transposed):
         #calc media
-        #mediaRound = (sumMediaRound / (currentRound-1))
+        mediaRound = (sumMediaRound / (currentRound-1))
 
         #calc mediana
-        mediaList.sort()
-        meio = int(round(len(mediaList)/2))
-        mediana = 0
-        if (meio > 2):
-            mediana = (mediaList[meio] + mediaList[meio + 1])/2
-        else:
-            mediana = (mediaList[meio] + mediaList[meio - 1])/2
+        #mediaList.sort()
+        #meio = int(round(len(mediaList)/2))
+        #mediana = 0
+        #if (meio > 2):
+        #    mediana = (mediaList[meio] + mediaList[meio + 1])/2
+        #else:
+        #    mediana = (mediaList[meio] + mediaList[meio - 1])/2
 
         #time Round
         timestampRoundList.sort()
         timeRound = (timestampRoundList[len(mediaList) - 1] - timestampRoundList[0])/1000
         
         #cut media or mediana
-        mediaCut = mediana#mediaRound
+        mediaCut = mediaRound#mediana#mediaRound
 
         #iterate round calculate chunks
         for myTuple in transposed:

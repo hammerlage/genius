@@ -47,8 +47,8 @@ def train(input_csv_file, output_csv_file):
 
     title = ['id', 'sequence', 'totalRoundVictory', 'totalRoundChallenge', 'gameTime', 'chunks', 'roundSuccess', 'totalRoundColors', 'sequenceNum']
 
-    with open(input_csv_file, 'rb') as csvfile:
-        reader = csv.reader(csvfile)
+    with open(input_csv_file) as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
 
         oldRow = None
         lastSuccess = None
@@ -72,9 +72,9 @@ def train(input_csv_file, output_csv_file):
         else:
             total[oldRow[GAME_ID]] = 0
 
-    with open(input_csv_file, 'rb') as csvfile:
-        reader = csv.reader(csvfile)
-        writer = csv.writer(open(output_csv_file, 'w'))
+    with open(input_csv_file) as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        writer = csv.writer(open(output_csv_file, 'w'), delimiter=',', lineterminator='\n')
         writer.writerow(title)
         oldRow = None
         roundRows = []
